@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "pharmaSafe",
+    "name": "PharmaSafe",
     "slug": "pharmaSafe",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,13 +13,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#E6F4FE"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.fedoraguy.pharmaSafe"
     },
     "web": {
       "output": "static",
@@ -43,6 +42,18 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "14a69f4f-4a5e-4928-8b93-bc9c805144d0"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/14a69f4f-4a5e-4928-8b93-bc9c805144d0"
     }
   }
 }

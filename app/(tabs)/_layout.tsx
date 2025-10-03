@@ -1,35 +1,129 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
+// app/(tabs)/_layout.tsx
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { auth } from '@/firebase';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Tabs, useRouter } from 'expo-router';
+import { onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Platform, View } from 'react-native';
+
+// Palette (kept from your snippet)
+const COLORS = {
+  bg: '#F9FAFB',        // gray-50
+  border: '#E5E7EB',    // gray-200
+  text: '#0F172A',      // slate-900
+  sub: '#24397eff',     // slate-500-ish
+  green: '#166534',     // green-800
+  greenSoft: '#DCFCE7', // green-100-ish background
+  primary: '#1E40AF',   // blue-800
+};
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+
+  // Simple auth guard at the layout level
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // Not signed in → go to login (replace to avoid back to tabs)
+        router.replace('/login');
+        setReady(false);
+      } else {
+        setReady(true);
+      }
+    });
+    return unsub;
+  }, [router]);
+
+  // Small loader while we confirm auth state
+  if (!ready) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: COLORS.bg,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ActivityIndicator color={COLORS.primary} />
+      </View>
+    );
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
+
+        // Colors
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.sub,
+
+        // Backgrounds
+        tabBarStyle: {
+          backgroundColor: COLORS.bg,
+          borderTopColor: COLORS.border,
+          borderTopWidth: 1,
+          elevation: 0,
+          shadowOpacity: 0,
+          height: Platform.OS === 'ios' ? 110 : 120,
+          paddingBottom: Platform.OS === 'ios' ? 18 : 15,
+          paddingTop: 8,
+        },
+
+        // Labels
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '700',
+        },
+
+        // Haptics + larger touch target
         tabBarButton: HapticTab,
-      }}>
+
+        // Hide bar when keyboard opens (Android esp.)
+        tabBarHideOnKeyboard: true,
+
+        // Scene background
+        sceneStyle: {
+          backgroundColor: COLORS.bg,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarAccessibilityLabel: 'Home',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="home" size={26} color={color} />
+          ),
         }}
       />
+
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Search',
+          tabBarAccessibilityLabel: 'Search',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="search" size={26} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarAccessibilityLabel: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="person" size={26} color={color} />
+          ),
         }}
       />
     </Tabs>
   );
 }
+  
