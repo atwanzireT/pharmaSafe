@@ -69,7 +69,7 @@ export default function TabLayout() {
           elevation: 0,
           shadowOpacity: 0,
           height: Platform.OS === 'ios' ? 110 : 120,
-          paddingBottom: Platform.OS === 'ios' ? 18 : 15,
+          paddingBottom: 8,
           paddingTop: 8,
         },
 
